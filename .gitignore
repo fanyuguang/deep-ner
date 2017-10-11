@@ -2,7 +2,3 @@
 *.pyc
 checkpoint/
 tensorboard/
-data/raw-data/
-data/datasets/
-data/vocab/
-data/tfrecords/
