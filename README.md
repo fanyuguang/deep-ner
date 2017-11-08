@@ -1,5 +1,7 @@
 # Named Entity Recognition
 
+using BLSTM-CRF to solve ner, model is implemented using tensorflow.
+
 * data_utils : create vocabulary, token words labels to ids, prepare train/validation/test datasets
 * tfrecords_utils : save data to tensorflow tfrecord file, shuffle read data from tfrecord file
 * model : define the inference, loss, accuracy
