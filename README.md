@@ -5,6 +5,7 @@ tfrecords_utils : save data to tensorflow tfrecord file, shuffle read data from 
 model : define the inference, loss, accuracy
 train : train the model
 predict : predict the ner result with input sentence, evaluate the result with precision/recall/f score
+evaluate : evaluate the score of model predict, include precision, recall, f
 
 Process:
 1. put data into raw-data directory
