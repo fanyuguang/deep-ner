@@ -1,2 +1,7 @@
 .idea/
 *.pyc
+checkpoint/*
+tensorboard/*
+data/datasets/*
+data/vocab/*
+data/tfrecords/*
