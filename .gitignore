@@ -5,3 +5,4 @@ tensorboard/*
 data/datasets/*
 data/vocab/*
 data/tfrecords/*
+ner_graph.pb
