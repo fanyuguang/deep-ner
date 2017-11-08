@@ -7,7 +7,7 @@
 * predict : predict the ner result with input sentence, evaluate the result with precision/recall/f score
 * evaluate : evaluate the score of model predict, include precision, recall, f
 
-Process:
+### Process
 1. put data into raw-data directory
 2. run data_utils.py to create train/validation/test in datasets directory, note that change the value of vocab_size
 3. run tfrecords.py, note that change the value of num_steps
