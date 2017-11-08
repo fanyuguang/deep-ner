@@ -3,11 +3,8 @@
 
 from __future__ import absolute_import
 from __future__ import division
-
 import os
-
 import tensorflow as tf
-
 import data_utils
 
 FLAGS = tf.app.flags.FLAGS
@@ -15,7 +12,7 @@ tf.app.flags.DEFINE_string('tfrecords_path', 'data/tfrecords/', 'tfrecords direc
 tf.app.flags.DEFINE_integer('batch_size', 1024, 'words batch size')
 tf.app.flags.DEFINE_integer('min_after_dequeue', 10000, 'min after dequeue')
 tf.app.flags.DEFINE_integer('num_threads', 1, 'read batch num threads')
-tf.app.flags.DEFINE_integer('num_steps', 50, 'num steps, equals the length of words')
+tf.app.flags.DEFINE_integer('num_steps', 200, 'num steps, equals the length of words')
 
 
 def create_record(words_list, labels_list, tfrecords_filename):
@@ -106,11 +103,11 @@ def main(_):
 
   words_vocab, labels_vocab = data_utils.initialize_vocabulary(vocab_path)
 
-  _, _, train_word_ids_list, train_label_ids_list = data_utils.data_to_token_ids(
+  train_word_ids_list, train_label_ids_list = data_utils.data_to_token_ids(
     os.path.join(datasets_path, 'train.txt'), words_vocab, labels_vocab)
-  _, _, validation_word_ids_list, validation_label_ids_list = data_utils.data_to_token_ids(
+  validation_word_ids_list, validation_label_ids_list = data_utils.data_to_token_ids(
     os.path.join(datasets_path, 'validation.txt'), words_vocab, labels_vocab)
-  _, _, test_word_ids_list, test_label_ids_list = data_utils.data_to_token_ids(
+  test_word_ids_list, test_label_ids_list = data_utils.data_to_token_ids(
     os.path.join(datasets_path, 'test.txt'), words_vocab, labels_vocab)
 
   create_record(train_word_ids_list, train_label_ids_list, os.path.join(tfrecords_path, 'train.tfrecords'))

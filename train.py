@@ -17,7 +17,8 @@ tf.app.flags.DEFINE_integer('num_layers', 2, 'lstm layers')
 tf.app.flags.DEFINE_integer('embedding_size', 100, 'word embedding size')
 tf.app.flags.DEFINE_integer('hidden_size', 100, 'lstm hidden size')
 tf.app.flags.DEFINE_float('keep_prob', 0.5, 'keep prob')
-tf.app.flags.DEFINE_integer('num_classes', 9, 'named entity classes')
+tf.app.flags.DEFINE_float('clip_norm', 5.0, 'clipping ratio')
+tf.app.flags.DEFINE_integer('num_classes', 21, 'named entity classes')
 
 
 def main(_):
@@ -30,6 +31,7 @@ def main(_):
   keep_prob = FLAGS.keep_prob
   batch_size = FLAGS.batch_size
   vocab_size = FLAGS.vocab_size
+  clip_norm = FLAGS.clip_norm
   num_classes = FLAGS.num_classes
   checkpoint_path = FLAGS.checkpoint_path
   tensorboard_path = FLAGS.tensorboard_path
@@ -53,12 +55,14 @@ def main(_):
     logits, final_state = model.inference(train_batch_features, batch_size, num_steps, vocab_size, embedding_size,
                                           hidden_size, keep_prob, num_layers, num_classes, is_training=True)
   train_batch_labels = tf.to_int64(train_batch_labels)
-  slice_logits, slice_train_batch_labels = model.slice_seq(logits, train_batch_labels, train_words_len_batch,
-                                                           batch_size, num_steps)
-  loss = model.loss(slice_logits, slice_train_batch_labels)
 
-  # crf
-  # loss = model.crf_loss(logits, train_batch_labels, batch_size, num_steps, num_classes)
+  # Loss of cross entropy between logits and labels
+  # slice_logits, slice_train_batch_labels = model.slice_seq(logits, train_batch_labels, train_words_len_batch,
+  #                                                          batch_size, num_steps)
+  # loss = model.loss(slice_logits, slice_train_batch_labels)
+
+  # Loss of crf
+  loss = model.crf_loss(logits, train_batch_labels, batch_size, num_steps, num_classes)
 
   with tf.variable_scope('model', reuse=True):
     accuracy_logits, final_state_valid = model.inference(validate_batch_features, batch_size, num_steps, vocab_size,
@@ -76,7 +80,14 @@ def main(_):
   if not os.path.exists(tensorboard_path):
     os.makedirs(tensorboard_path)
 
-  train_op = optimizer.minimize(loss, global_step=global_step)
+  # compute and update gradient
+  # train_op = optimizer.minimize(loss, global_step=global_step)
+
+  # computer, clip and update gradient
+  gradients, variables = zip(*optimizer.compute_gradients(loss))
+  clip_gradients, _ = tf.clip_by_global_norm(gradients, clip_norm)
+  train_op = optimizer.apply_gradients(zip(clip_gradients, variables), global_step=global_step)
+
   init_op = tf.global_variables_initializer()
 
   saver = tf.train.Saver(max_to_keep=None)
@@ -115,7 +126,6 @@ def main(_):
       print('Done training after reading all data')
     finally:
       coord.request_stop()
-
     coord.join(threads)
 
 
