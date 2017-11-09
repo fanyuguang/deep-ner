@@ -280,7 +280,7 @@ def single_word_file_predict(data_filename, predict_filename):
                                       zip(merge_predict_word_list, merge_predict_label_list) if predict_label != 'O'])
     word_predict_category_list.append(word_predict_category)
   with open(predict_filename, mode='w') as predict_file:
-    for (sentence, word_predict_label, word_predict_category, word_category) in \
+    for (sentence, word_predict_label, word_category, word_predict_category) in \
         zip(sentence_list, word_predict_label_list, word_category_list, word_predict_category_list):
       predict_file.write('Passage: ' + sentence + '\n')
       predict_file.write('SinglePredict: ' + word_predict_label + '\n')
